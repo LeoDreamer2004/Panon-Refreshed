@@ -1,4 +1,6 @@
-# Panon Plasma 6 local repair
+# Panon-Refreshed — local repair history
+
+[English documentation](README.md) | [简体中文文档](README.zh-CN.md)
 
 For current installation, portability settings and support boundaries, see
 [README.md](README.md). This file records the history of the local repair.
