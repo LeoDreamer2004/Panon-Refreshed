@@ -1,12 +1,14 @@
 # Panon-Refreshed
 
+![Desktop](./contents/demo/desktop.png)
+![Bar](./contents/demo/bar.png)
+
 English | [简体中文](README.zh-CN.md)
 
 Audio spectrum, rotating album artwork, synchronized lyrics and standard MPRIS
 controls for KDE Plasma, with separate desktop and compact panel layouts.
 
-**Plasma 6 only. Plasma 5 is unsupported.** Compatibility work targets Plasma 6
-environments, not a Plasma 5 backport.
+**Plasma 6 only. Plasma 5 is unsupported.**
 
 ## Installation and dependencies
 
@@ -33,22 +35,14 @@ or run `python3 -m panon.backend.doctor` from `contents/scripts`.
 
 ## Optional exact-ID lyrics integrations
 
-- [NetEase web player](integrations/netease/README.md)
-- [QQ Music system-Electron build](integrations/qqmusic/README.md)
-
-Generic spectrum and MPRIS controls do not require a supported lyrics provider.
-Lyrics never use title search or another platform's recording as a substitute.
-
-Both installers accept `--app-path /absolute/path/app.asar`,
-`--electron /path/to/electron` and `--dry-run`. Without explicit values, only
-known layouts are checked; ambiguity is an error. Choices are saved in
-`$XDG_CONFIG_HOME/panon/integrations/<provider>.json`; the menu entry records the
-selected executable. Explicit paths do not imply compatibility with unknown
-player builds or runtimes. QQ's tested version/module map is `adapters.json`.
-
-Upstream files and original launchers are not modified. Move this project only
-if you rerun its launcher installers. Fully exit and relaunch a player through
-its Panon entry after updating bridge launch code.
+Optional bridges support `netease-cloud-music-web-player` and the tested QQ Music
+1.1.8 / Electron 43 build, reading lyrics by verified song ID without title search.
+In **Music integrations**, auto-detect the player paths and update its separate
+`.desktop` launcher, then fully quit the player (including its tray process) and
+reopen it through the **Panon** menu entry; upstream files and original launchers
+remain unchanged.
+After moving the project or changing player paths, update that launcher again;
+generic spectrum and MPRIS controls work without these bridges.
 
 ## Verification status
 

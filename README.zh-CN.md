@@ -1,12 +1,13 @@
 # Panon-Refreshed
 
+![Desktop](./contents/demo/desktop.png)
+![Bar](./contents/demo/bar.png)
+
 [English](README.md) | 简体中文
 
 面向 KDE Plasma 的音频可视化组件，提供频谱、旋转专辑封面、同步歌词和标准 MPRIS 播放控制，并针对桌面与面板提供不同布局。
 
-**仅支持 Plasma 6，不支持 Plasma 5。** 兼容性工作面向不同的 Plasma 6 环境，不包含向 Plasma 5 移植。
-
-项目目录名为 `panon-refreshed`；代码包名、插件 ID 和现有组件名称仍保留 `panon` / `Panon`，安装命令和配置路径无需因此改名。
+**仅支持 Plasma 6，不支持 Plasma 5。**
 
 ## 安装与依赖
 
@@ -36,20 +37,9 @@ python3 -m panon.backend.doctor
 
 ## 可选的歌词集成
 
-- [网易云网页播放器集成](integrations/netease/README.md)
-- [QQ 音乐系统 Electron 版本集成](integrations/qqmusic/README.md)
-
-通用频谱与 MPRIS 控制不依赖特定歌词提供方。歌词读取要求经过验证的当前歌曲 ID，不使用歌名搜索，也不会拿其他平台的录音版本替代。
-
-两个集成启动项安装器都接受以下参数：
-
-- `--app-path /absolute/path/app.asar`：播放器应用包。
-- `--electron /path/to/electron`：播放器所支持的 Electron 运行时。
-- `--dry-run`：只预览，不写入配置或菜单入口。
-
-未明确指定时，仅检查已知安装布局；不能唯一确定时会报错。选择保存在 `$XDG_CONFIG_HOME/panon/integrations/<provider>.json` 中，生成的菜单入口记录所选可执行文件。自定义路径不代表兼容未知播放器构建或运行时；QQ 音乐已验证的版本与模块映射见 [adapters.json](integrations/qqmusic/adapters.json)。
-
-集成不会修改上游播放器文件或原启动项。若移动项目目录，需重新运行相应启动项安装器。更新桥接启动代码后，应完全退出播放器（包括托盘后台），再从带有“Panon 集成”的菜单入口启动。原入口不会启用歌词桥接。
+可选桥接支持 `netease-cloud-music-web-player` 和已验证的 QQ 音乐 1.1.8 / Electron 43 构建，通过校验后的歌曲 ID 读取歌词，不使用歌名搜索。
+在“音乐软件集成”页自动检测播放器路径并更新独立的 `.desktop` 启动项，随后完全退出播放器（包括托盘后台），从带有“Panon 集成”的菜单入口重新启动；上游文件和原启动项保持不变。
+移动项目或更改播放器路径后需再次更新启动项，通用频谱与 MPRIS 控制则无需启用这些桥接。
 
 ## 验证状态
 

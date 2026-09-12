@@ -8,11 +8,11 @@ For current installation, portability settings and support boundaries, see
 ## Exact NetEase integration
 
 QQ Music using system Electron is also supported through its optional
-[QQ Music bridge](integrations/qqmusic/README.md), using exact current-track IDs
+[QQ Music bridge](README.md#optional-exact-id-lyrics-integrations), using exact current-track IDs
 and lyrics retrieved by the player itself.
 
 Lyrics now require a verified platform song ID instead of title search.
-Use the optional [NetEase launch bridge](integrations/netease/README.md) to
+Use the optional [NetEase launch bridge](README.md#optional-exact-id-lyrics-integrations) to
 start the installed web player with Panon integration. No system player files
 are modified. Other players keep generic MPRIS controls and spectrum support,
 but do not trigger title-based lyric searches.
