@@ -1,0 +1,393 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Panon 6.1.0-local\n"
+"Report-Msgid-Bugs-To: https://github.com/rbn42/panon/issues\n"
+"PO-Revision-Date: 2026-09-11 23:00+0800\n"
+"Last-Translator: Panon local contributors\n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgctxt "@label"
+msgid "Color space:"
+msgstr "色彩空间"
+
+msgctxt "@label:spinbox"
+msgid "Height:"
+msgstr "高度:"
+
+msgctxt "@label:spinbox"
+msgid "Hue from"
+msgstr "色相起点"
+
+msgctxt "@label:spinbox"
+msgid "Hue to"
+msgstr "色相终点"
+
+msgctxt "@label:spinbox"
+msgid "Lightness"
+msgstr "亮度"
+
+msgctxt "@label:spinbox"
+msgid "Saturation"
+msgstr "饱和度"
+
+msgctxt "@label:spinbox"
+msgid "Width:"
+msgstr "宽度:"
+
+msgctxt "@option:check"
+msgid "Fill height (don't work with Auto-hiding)"
+msgstr "填充高度(不能和自动隐藏一起用)"
+
+msgctxt "@option:check"
+msgid "Fill width (don't work with Auto-hiding)"
+msgstr "填充宽度(不能和自动隐藏一起用)"
+
+msgctxt "@option:check"
+msgid "Flip"
+msgstr "翻转"
+
+msgctxt "@option:check"
+msgid "Hide tooltip"
+msgstr "隐藏提示窗口"
+
+msgctxt "@option:check"
+msgid "Reduce the weight of bass"
+msgstr "减小低音权重"
+
+msgctxt "@option:radio"
+msgid "Animate auto-hiding"
+msgstr "自动隐藏动画"
+
+msgctxt "@option:radio"
+msgid "Auto-hide (when audio is gone)"
+msgstr "自动隐藏(当没有声音的时候)"
+
+msgctxt "@option:radio"
+msgid "Show FPS"
+msgstr "显示FPS"
+
+msgctxt "@title"
+msgid "Back-end"
+msgstr "音频数据源"
+
+msgctxt "@title"
+msgid "Colors"
+msgstr "色彩"
+
+msgctxt "@title"
+msgid "General"
+msgstr "常规"
+
+msgctxt "@title"
+msgid "Visual Effects"
+msgstr "视觉特效"
+
+msgid "Audio frequency:"
+msgstr "音域:"
+
+msgid "Back-end:"
+msgstr "音频数据源:"
+
+msgid "Center"
+msgstr "中心"
+
+msgid "East"
+msgstr "东"
+
+msgid "Effect:"
+msgstr "特效:"
+
+msgid "Effects"
+msgstr "特效"
+
+msgid "Error: Failed to compile bufffer shader."
+msgstr "错误:无法编译buffer shader"
+
+msgid "Error: Failed to compile image shader."
+msgstr "错误:无法编译image shader"
+
+msgid ""
+"Error: Failed to load the visual effect. Please choose another visual effect "
+"in the configuration dialog."
+msgstr "错误:无法加载视觉特效,请从配置窗口中选择一个新的视觉特效."
+
+msgid "Error: Find undeclared arguments."
+msgstr "错误:发现未声明的参数"
+
+msgid "Fifo path:"
+msgstr "fifo文件路径:"
+
+msgid "Gravity:"
+msgstr "重力(反)方向:"
+
+msgid "Hint:"
+msgstr "提示:"
+
+msgid "Input device:"
+msgstr "输入设备:"
+
+msgid "Latency / resolution:"
+msgstr "延迟/分辨率"
+
+msgid "Lower FPS saves CPU and battries."
+msgstr "更低的FPS能节省CPU和电池"
+
+msgid "Mixing All Microphones"
+msgstr "混合所有麦克风"
+
+msgid "Mixing All Microphones and Speakers"
+msgstr "混合所有麦克风和扬声器"
+
+msgid "Mixing All Speakers"
+msgstr "混合所有扬声器"
+
+msgid "Monitor of Current Device"
+msgstr "当前设备的监视器"
+
+msgid "North"
+msgstr "北"
+
+msgid "Randomize colors"
+msgstr "生成随机颜色"
+
+msgid "South"
+msgstr "南"
+
+msgid "Test your audio frequency."
+msgstr "测试你的音域"
+
+msgid "Version:"
+msgstr "版本:"
+
+msgid "West"
+msgstr "西"
+
+msgid "Theme:"
+msgstr "主题："
+
+msgid "Classic Bars"
+msgstr "经典条形"
+
+msgid "Center Equalizer"
+msgstr "居中均衡器"
+
+msgid "Wave Ribbon"
+msgstr "波形光带"
+
+msgid "Mountains"
+msgstr "山峦"
+
+msgid "Neon Dots"
+msgstr "霓虹光点"
+
+msgid "Radial"
+msgstr "放射频谱"
+
+msgid "Spectrogram"
+msgstr "频谱图"
+
+msgid "Refresh rate:"
+msgstr "刷新率："
+
+msgid "Bars:"
+msgstr "频谱条数："
+
+msgid "Sensitivity:"
+msgstr "灵敏度："
+
+msgid "Decay:"
+msgstr "衰减："
+
+msgid "Mirror spectrum from the center"
+msgstr "从中心镜像频谱"
+
+msgid "Collapse completely when no audio is playing"
+msgstr "没有音频播放时完全收起"
+
+msgid "Animate hiding"
+msgstr "启用隐藏动画"
+
+msgid "Fill available panel space"
+msgstr "填满面板可用空间"
+
+msgid "Panel width:"
+msgstr "面板宽度："
+
+msgid "Spectrum width:"
+msgstr "频谱宽度："
+
+msgid "Desktop blur:"
+msgstr "桌面背景模糊强度："
+
+msgid "Background dark overlay:"
+msgstr "背景暗色遮罩："
+
+msgid "Toggle Japanese readings"
+msgstr "开关日语注音"
+
+msgid "Return to current lyric"
+msgstr "回到当前歌词"
+
+msgid "No synchronized lyrics"
+msgstr "暂无同步歌词"
+
+msgid "Japanese readings: NetEase first, local fallback"
+msgstr "日语注音：优先网易云读音，缺失或无法对齐时使用本地注音"
+
+msgid "%1 FPS"
+msgstr "%1 帧/秒"
+
+msgid "%1 px"
+msgstr "%1 像素"
+
+msgid "%1%"
+msgstr "%1%"
+
+msgid "Python interpreter:"
+msgstr "Python 解释器："
+
+msgid "Check dependencies"
+msgstr "检查依赖"
+
+msgid "Audio source:"
+msgstr "音频采集源："
+
+msgid "Preferred MPRIS service:"
+msgstr "首选 MPRIS 服务："
+
+msgid "Lyrics font:"
+msgstr "歌词字体："
+
+msgid "Automatic"
+msgstr "自动"
+
+msgid "Audio backend is not responding"
+msgstr "音频后端暂未响应"
+
+msgid "Auto-detect"
+msgstr "自动检测"
+
+msgid "Select a detected candidate"
+msgstr "选择检测结果"
+
+msgid "Detecting…"
+msgstr "正在检测…"
+
+msgid "Updating integration launcher…"
+msgstr "正在更新集成启动项…"
+
+msgid "Detected values filled in. Apply to save."
+msgstr "已填入检测结果，点击“应用”保存。"
+
+msgid "No compatible candidate found; existing values were kept."
+msgstr "未找到兼容的候选项，已保留原有内容。"
+
+msgid "Multiple candidates found. Select one beside the field."
+msgstr "检测到多个候选项，请在输入框旁选择。"
+
+msgid "Detection failed: %1"
+msgstr "检测失败：%1"
+
+msgid "Leave audio source and MPRIS service empty to follow changes automatically. Detection fills the current choice."
+msgstr "音频源和 MPRIS 服务留空时会自动跟随变化；检测按钮会填入当前选择。"
+
+msgid "NetEase application package:"
+msgstr "网易云应用包："
+
+msgid "NetEase Electron runtime:"
+msgstr "网易云 Electron："
+
+msgid "Update NetEase integration launcher"
+msgstr "更新网易云集成启动项"
+
+msgid "QQ Music application package:"
+msgstr "QQ 音乐应用包："
+
+msgid "QQ Music Electron runtime:"
+msgstr "QQ 音乐 Electron："
+
+msgid "Update QQ Music integration launcher"
+msgstr "更新 QQ 音乐集成启动项"
+
+msgid "Detection only fills fields. Update the integration launcher explicitly, then restart the player from that entry."
+msgstr "检测仅填充输入框。请手动点击更新集成启动项，再从该入口重新启动播放器。"
+
+msgctxt "@title"
+msgid "Appearance"
+msgstr "视觉效果"
+
+msgctxt "@title"
+msgid "Backend and integrations"
+msgstr "后端与集成"
+
+msgid "Spectrum analysis"
+msgstr "频谱分析"
+
+msgid "Widget communication"
+msgstr "组件通信"
+
+msgid "Media information and controls"
+msgstr "媒体信息与播放控制"
+
+msgid "Album artwork processing"
+msgstr "专辑封面处理"
+
+msgid "Japanese readings (optional)"
+msgstr "日语注音（可选）"
+
+msgid "Audio capture; lyrics still work without it"
+msgstr "音频采集；缺失时仍可显示歌词"
+
+msgid "Checking Python environment…"
+msgstr "正在检查 Python 环境…"
+
+msgid "Environment check could not run"
+msgstr "无法完成环境检查"
+
+msgid "Required dependencies need attention"
+msgstr "必需依赖存在问题"
+
+msgid "Core dependencies ready; some features unavailable"
+msgstr "核心依赖就绪，部分功能暂不可用"
+
+msgid "All dependencies are available"
+msgstr "所有依赖均可用"
+
+msgid "Available"
+msgstr "可用"
+
+msgid "Unavailable"
+msgstr "不可用"
+
+msgid "Hide error details"
+msgstr "收起错误详情"
+
+msgid "Show error details"
+msgstr "查看错误详情"
+
+msgid "Check the interpreter path or use Auto-detect, then try again."
+msgstr "请检查解释器路径，或点击“自动检测”后重试。"
+
+msgctxt "@title"
+msgid "Backend"
+msgstr "后端"
+
+msgctxt "@title"
+msgid "Music integrations"
+msgstr "音乐软件集成"
+
+msgid "How to enable player integration"
+msgstr "如何启用播放器集成"
+
+msgid "Launcher updated. Restart the player using its Panon menu entry."
+msgstr "启动项已更新，请从带有“Panon 集成”的菜单入口重新启动播放器。"
+
+msgid "Launcher update failed: %1"
+msgstr "更新启动项失败：%1"
+
+msgid "1. Auto-detect the application package and Electron runtime, or fill them manually.\n2. Click Update integration launcher to create a separate .desktop entry in your user applications directory ($XDG_DATA_HOME/applications, normally ~/.local/share/applications). The original launcher and player files are unchanged.\n3. Fully quit the player, including its tray process, then open the new NetEase/QQ Music (Panon) entry from the application menu. The original entry does not enable the lyrics bridge.\n4. Apply saves these fields only; it does not update the .desktop entry. After moving Panon or changing paths, update the launcher again."
+msgstr "1. 点击“自动检测”填写应用包和 Electron 路径，也可手动填写。\n2. 点击“更新集成启动项”，在用户应用目录（$XDG_DATA_HOME/applications，通常为 ~/.local/share/applications）生成独立的 .desktop 文件，不修改原启动项或播放器文件。\n3. 完全退出播放器（包括托盘后台），再从应用菜单打开“网易云音乐 / QQ音乐（Panon 集成）”。原入口不会启用歌词桥接。\n4. “应用”只保存本页输入值，不会更新 .desktop 启动项。移动 Panon 或更改路径后，请再次更新启动项。"

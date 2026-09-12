@@ -1,0 +1,2 @@
+pykakasi>=2.2
+jaconv>=0.3

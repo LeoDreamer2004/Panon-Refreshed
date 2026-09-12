@@ -1,0 +1,30 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "",
+                "Name": "rbn42"
+            }
+        ],
+        "Category": "Multimedia",
+        "Dependencies": [
+        ],
+        "Description": "A PipeWire-aware audio spectrum visualizer for Plasma 6",
+        "Description[zh_CN]": "适用于 Plasma 6、可自动跟随输出设备的音频频谱",
+        "EnabledByDefault": true,
+        "Icon": "applications-multimedia",
+        "Id": "panon",
+        "License": "GPL-3.0+",
+        "Name": "Panon",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "6.1.0-local",
+        "Website": "https://github.com/rbn42/panon"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [
+        "panon"
+    ],
+    "KPackageStructure": "Plasma/Applet"
+}

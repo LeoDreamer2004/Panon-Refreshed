@@ -1,0 +1,21 @@
+name: Backend and bridge tests
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python }}'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: sudo apt-get update && sudo apt-get install -y libdbus-1-dev libglib2.0-dev pkg-config
+      - run: python -m pip install -r requirements.txt -r requirements-readings.txt
+      - run: python -m unittest discover -s tests -p 'test_*.py'
+      - run: node tests/test_netease_page.cjs && node tests/test_qqmusic_page.cjs && node tests/test_qml_utils.cjs
