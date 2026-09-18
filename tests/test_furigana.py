@@ -56,7 +56,8 @@ class FuriganaTests(unittest.TestCase):
                 "panon.backend.lyrics._request_netease", return_value=response
             ) as request:
                 bundle = _fetch_and_cache_lyrics(MediaState(title="うた", provider="netease", song_id="1"), cache)
-            self.assertEqual(request.call_args.args[1]["rv"], -1)
+            self.assertEqual(request.call_args.args[1]["rv"], 0)
+            self.assertEqual(request.call_args.args[1]["yv"], 0)
             self.assertEqual(bundle.readings, [(1., "ki mi no sa da me")])
             self.assertEqual(_read_lyric_cache(cache).readings, bundle.readings)
 

@@ -56,9 +56,13 @@ Item {
     signal nextRequested()
     signal seekRequested(real position)
 
-    readonly property color primaryColor: colors && colors.length > 0 ? colors[0] : "#8b5cf6"
-    readonly property color secondaryColor: colors && colors.length > 1 ? colors[1] : "#22d3ee"
-    readonly property color tertiaryColor: colors && colors.length > 2 ? colors[2] : "#f472b6"
+    property color primaryColor: colors && colors.length > 0 ? colors[0] : "#8b5cf6"
+    property color secondaryColor: colors && colors.length > 1 ? colors[1] : "#22d3ee"
+    property color tertiaryColor: colors && colors.length > 2 ? colors[2] : "#f472b6"
+    Behavior on primaryColor { ColorAnimation { duration: 600; easing.type: Easing.InOutCubic } }
+    Behavior on secondaryColor { ColorAnimation { duration: 600; easing.type: Easing.InOutCubic } }
+    Behavior on tertiaryColor { ColorAnimation { duration: 600; easing.type: Easing.InOutCubic } }
+    readonly property var displayColors: [primaryColor, secondaryColor, tertiaryColor]
     readonly property real gaussianRadius: blurStrength <= 0
                                                    ? 0
                                                    : 4 + 28 * blurStrength / 100.0
@@ -225,14 +229,14 @@ Item {
                     spectrum: root.spectrum
                     audioLevel: root.audioLevel
                     artUrl: root.artUrl
-                    colors: root.colors
+                    colors: root.displayColors
                     playing: root.mediaPlaying
                 }
 
                 PlaybackControls {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 66
-                    colors: root.colors
+                    colors: root.displayColors
                     mediaPlaying: root.mediaPlaying
                     mediaPosition: root.mediaPosition
                     mediaDuration: root.mediaDuration
@@ -268,9 +272,10 @@ Item {
             currentLyricIndex: root.currentLyricIndex
             showTranslation: root.showTranslation
             showFurigana: root.showFurigana
-            colors: root.colors
+            colors: root.displayColors
             lyricsAvailable: root.lyricsAvailable
             mediaPlaying: root.mediaPlaying
+            mediaPosition: root.mediaPosition
             canSeek: root.canSeek
             onSeekRequested: function(position) { root.seekRequested(position) }
         }

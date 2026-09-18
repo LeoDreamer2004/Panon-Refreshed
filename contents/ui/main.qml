@@ -40,6 +40,8 @@ PlasmoidItem {
         mediaPlaying: root.mediaPlaying
         lyricsAvailable: root.lyricsAvailable
         lyricTiming: root.lyricTiming
+        lyricWords: root.currentLyricIndex >= 0 && root.lyricWindow.entries
+                    ? (root.lyricWindow.entries[root.currentLyricIndex] || {}).words || [] : []
         lyricKey: root.lyricModelId + ":" + root.currentLyricIndex
     }
     fullRepresentation: DesktopView {

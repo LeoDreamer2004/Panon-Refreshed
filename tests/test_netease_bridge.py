@@ -87,7 +87,7 @@ class BridgeTests(unittest.TestCase):
             bundle = _fetch_and_cache_lyrics(MediaState(title="song", provider="netease", song_id="123"), self.file)
             self.assertEqual(bundle.lines, [(1., "exact")])
             self.assertEqual(request.call_args.args[1]["id"], 123)
-            self.assertTrue(all(url.endswith("/api/song/lyric") for url in request.call_args.args[0]))
+            self.assertTrue(all(url.endswith("/api/song/lyric/v1") for url in request.call_args.args[0]))
             self.assertEqual(request.call_count, 1)
 
     def test_same_title_different_id_has_separate_cache(self):
@@ -96,15 +96,19 @@ class BridgeTests(unittest.TestCase):
         self.assertNotEqual(_cache_path(a), _cache_path(b))
         self.assertNotEqual(a.identity, b.identity)
 
-    def test_instrumental_requires_explicit_flag_and_no_lyrics(self):
+    def test_instrumental_uses_only_pure_music_flag(self):
         state = MediaState(title="song", provider="netease", song_id="123")
         for response, expected in [
             ({"pureMusic": True}, True),
-            ({"nolyric": True}, True),
+            ({"nolyric": True}, False),
             ({"pureMusic": False, "uncollected": True}, False),
             ({}, False),
             ({"pureMusic": "true"}, False),
-            ({"pureMusic": True, "lrc": {"lyric": "[00:01]actual lyric"}}, False),
+            ({"pureMusic": True, "lrc": {"lyric": "[00:01]actual lyric"}}, True),
+            ({"pureMusic": True, "lrc": {"lyric": "[00:05.00]纯音乐，请欣赏"}}, True),
+            ({"lrc": {"lyric": "[00:05]纯音乐, 请欣赏。"}}, False),
+            ({"lrc": {"lyric": "[00:05]纯音乐，请欣赏\n[00:10]actual lyric"}}, False),
+            ({"lrc": {"lyric": "[00:05]这首纯音乐，请欣赏"}}, False),
         ]:
             with self.subTest(response=response), patch(
                 "panon.backend.lyrics._request_netease", return_value=response
@@ -112,18 +116,27 @@ class BridgeTests(unittest.TestCase):
                 bundle = _fetch_and_cache_lyrics(state, self.file)
                 self.assertEqual(bundle.instrumental, expected)
                 self.assertEqual(_read_lyric_cache(self.file).instrumental, expected)
+                if expected:
+                    self.assertEqual(bundle.lines, [])
 
-    def test_only_old_empty_cache_needs_refresh(self):
+    def test_old_instrumental_classification_is_refetched(self):
+        self.file.write_text(json.dumps(dict(
+            lines=[[5, "纯音乐，请欣赏"]], provider_version=8,
+            instrumental=False, words=[[{"text": "纯音乐，请欣赏", "start": 5, "duration": 1}]],
+            translations=[[5, "placeholder"]])))
+        self.assertIsNone(_read_lyric_cache(self.file))
+
+    def test_pre_yrc_cache_needs_refresh(self):
         payload = dict(lines=[], provider_version=5, checked_at=100, instrumental=False)
         self.file.write_text(json.dumps(payload))
         with patch("panon.backend.lyrics.time.time", return_value=101):
             self.assertIsNone(_read_lyric_cache(self.file))
-            payload.update(provider_version=6, instrumental=True)
+            payload.update(provider_version=9, instrumental=True)
             self.file.write_text(json.dumps(payload))
             self.assertTrue(_read_lyric_cache(self.file).instrumental)
             payload.update(provider_version=5, lines=[[1, "existing lyric"]], instrumental=False)
             self.file.write_text(json.dumps(payload))
-            self.assertEqual(_read_lyric_cache(self.file).lines, [(1., "existing lyric")])
+            self.assertIsNone(_read_lyric_cache(self.file))
 
 
 if __name__ == "__main__":

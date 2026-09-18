@@ -22,6 +22,7 @@ from .lyrics import (
     lyric_context,
     lyric_index_at,
     lyric_window,
+    playback_lyric_timing,
     read_mpris,
 )
 from .control import execute_command
@@ -189,6 +190,7 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
     lyrics_resolved = True
     next_palette_retry = 0.0
     palette_retry_count = 0
+    palette_pending = True
     wallpaper_url = ""
     next_wallpaper_poll = 0.0
     wallpaper = {}
@@ -266,7 +268,8 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                                 lyric_task.cancel()
                             lyric_task = None
                         if track_changed or artwork_changed:
-                            palette = FALLBACK_PALETTE.copy()
+                            # Hold the previous palette while the next cover loads.
+                            palette_pending = True
                             palette_retry_count = 0
                             next_palette_retry = now
                             if palette_task is not None and not palette_task.done():
@@ -290,6 +293,11 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                                 )
                                 for entry, ruby in zip(lyric_model["entries"], loaded_bundle.ruby):
                                     entry["ruby"] = ruby
+                                for entry, words in zip(lyric_model["entries"], loaded_bundle.words):
+                                    entry["words"] = words
+                                events = [event for event in loaded_bundle.timeline if not event["blank"]]
+                                for entry, event in zip(lyric_model["entries"], events):
+                                    entry["end"] = event["end"]
                                 lyric_model["hasFurigana"] = any(
                                     part.get("reading") for line in loaded_bundle.ruby for part in line
                                 )
@@ -323,7 +331,9 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                     try:
                         identity, art_url, loaded_palette = palette_task.result()
                         if identity == media.identity and art_url == media.art_url:
-                            palette = loaded_palette
+                            palette_pending = loaded_palette == FALLBACK_PALETTE
+                            if not palette_pending:
+                                palette = loaded_palette
                             if loaded_palette == FALLBACK_PALETTE and art_url:
                                 next_palette_retry = now + 1.5
                     except asyncio.CancelledError:
@@ -336,7 +346,7 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                 if (
                     palette_task is None
                     and media.art_url
-                    and palette == FALLBACK_PALETTE
+                    and palette_pending
                     and palette_retry_count < 6
                     and now >= next_palette_retry
                 ):
@@ -376,15 +386,8 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                     lyric_lines, position
                 )
                 line_index = visible_lyrics["currentIndex"]
-                visible_lyrics["timing"] = {
-                    "position": position,
-                    "start": lyric_lines[line_index][0] if line_index >= 0 else 0.0,
-                    "end": (
-                        lyric_lines[line_index + 1][0]
-                        if 0 <= line_index < len(lyric_lines) - 1
-                        else media.duration
-                    ),
-                }
+                visible_lyrics["timing"] = playback_lyric_timing(
+                    lyric_model["entries"], line_index, position, media.duration)
                 await websocket.send(
                     json.dumps(
                         {

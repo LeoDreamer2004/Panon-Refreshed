@@ -14,6 +14,7 @@ Item {
     property string trackArtist: ""
     property string currentLyric: ""
     property var lyricTiming: ({})
+    property var lyricWords: []
     property string lyricKey: ""
     property bool mediaPlaying: false
     property bool lyricsAvailable: false
@@ -88,6 +89,7 @@ Item {
             visible: root.showLyrics
             text: root.currentLyric
             timing: root.lyricTiming
+            words: root.lyricWords
             lineKey: root.lyricKey
         }
     }

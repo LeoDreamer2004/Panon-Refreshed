@@ -80,6 +80,52 @@ class LyricBundle:
     readings: list[tuple[float, str]] = field(default_factory=list)
     ruby: list = field(default_factory=list)
     instrumental: bool = False
+    words: list = field(default_factory=list)
+    timeline: list = field(default_factory=list)
+
+
+def parse_yrc(source: str, *, with_timeline=False):
+    """Return synchronized lines and absolute word times (milliseconds -> seconds)."""
+    rows = []
+    timeline = []
+    for raw in source.splitlines():
+        header = re.match(r"^\[(\d+),(\d+)\]", raw)
+        if not header:
+            continue
+        words = []
+        for match in re.finditer(r"\((\d+),(\d+),\d+\)([^\r\n]*?)(?=\(\d+,\d+,\d+\)|$)", raw[header.end():]):
+            start, duration, text = match.groups()
+            words.append({"text": text, "start": int(start) / 1000,
+                          "duration": int(duration) / 1000})
+        text = "".join(word["text"] for word in words)
+        timeline.append({"start": int(header[1]) / 1000,
+                         "end": max([(int(header[1]) + int(header[2])) / 1000]
+                                    + [word["start"] + word["duration"] for word in words]),
+                         "blank": not bool(text.strip())})
+        if text.strip():
+            rows.append((int(header[1]) / 1000, text, words))
+    rows.sort(key=lambda row: row[0])
+    result = ([(start, text) for start, text, _ in rows], [words for _, _, words in rows])
+    return (*result, sorted(timeline, key=lambda entry: entry["start"])) if with_timeline else result
+
+
+def lrc_timeline(source: str):
+    events = parse_lrc(source, keep_empty=True)
+    return [{"start": start, "end": events[i + 1][0] if i + 1 < len(events) else None,
+             "blank": not bool(text)} for i, (start, text) in enumerate(events)]
+
+
+def playback_lyric_timing(entries, index, position, duration):
+    """Visible lines can be held during silence without extending their timing."""
+    if not 0 <= index < len(entries):
+        return {"position": position, "start": 0, "end": 0, "inGap": True}
+    entry = entries[index]
+    next_start = entries[index + 1]["timestamp"] if index + 1 < len(entries) else duration
+    end = entry.get("end")
+    if end is None:
+        end = next_start
+    return {"position": position, "start": entry["timestamp"], "end": end,
+            "nextStart": next_start, "inGap": position >= end}
 
 
 
@@ -223,7 +269,7 @@ def _request_netease(urls: tuple[str, ...], parameters: dict[str, object]) -> di
 
 
 
-def parse_lrc(source: str) -> list[tuple[float, str]]:
+def parse_lrc(source: str, *, keep_empty=False) -> list[tuple[float, str]]:
     offset = 0.0
     parsed: list[tuple[float, str]] = []
     for raw_line in source.splitlines():
@@ -237,7 +283,7 @@ def parse_lrc(source: str) -> list[tuple[float, str]]:
         if not matches:
             continue
         text = TIMESTAMP.sub("", raw_line).strip()
-        if not text:
+        if not text and not keep_empty:
             continue
         for match in matches:
             fraction = (match.group(3) or "0")
@@ -257,8 +303,10 @@ def _cache_path(state: MediaState) -> Path:
 def _read_lyric_cache(cache: Path) -> LyricBundle | None:
     try:
         payload = json.loads(cache.read_text(encoding="utf-8"))
+        if int(payload.get("provider_version", 0)) < 9:
+            return None
         lines = [
-            (float(timestamp), str(text).strip())
+            (float(timestamp), str(text))
             for timestamp, text in payload["lines"]
             if str(text).strip()
         ]
@@ -268,13 +316,12 @@ def _read_lyric_cache(cache: Path) -> LyricBundle | None:
             if str(text).strip()
         ]
         if not lines:
-            # Older empty results did not recognize NetEase's pureMusic flag.
-            if int(payload.get("provider_version", 0)) < 6:
-                return None
             if time.time() - float(payload.get("checked_at", 0)) > 1800:
                 return None
         readings = [(float(t), str(s)) for t, s in payload.get("readings", [])]
-        return LyricBundle(lines, translations, readings, instrumental=payload.get("instrumental") is True)
+        return LyricBundle(
+            lines, translations, readings, instrumental=payload.get("instrumental") is True,
+            words=payload.get("words", []), timeline=payload.get("timeline", []))
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
         return None
 
@@ -287,15 +334,24 @@ def _fetch_and_cache_lyrics(
     song_id = int(state.song_id)
     source = "netease"
     # Exact route only: never substitute a similarly named recording.
-    response = _request_netease(LYRIC_URLS, {"id": song_id, "lv": 1, "kv": 1, "tv": -1, "rv": -1})
+    response = _request_netease(tuple(url + "/v1" for url in LYRIC_URLS), {
+        "id": song_id, "cp": "false", "lv": 0, "kv": 0, "tv": 0,
+        "rv": 0, "yv": 0, "ytv": 0, "yrv": 0})
     if response.get("code", 200) != 200:
         raise TemporaryAPIError(f"NetEase lyrics returned code {response.get('code')}")
     lines = parse_lrc((response.get("lrc") or {}).get("lyric", ""))
+    timeline = lrc_timeline((response.get("lrc") or {}).get("lyric", ""))
     translations = parse_lrc((response.get("tlyric") or {}).get("lyric", ""))
     readings = parse_lrc((response.get("romalrc") or {}).get("lyric", ""))
-    instrumental = not lines and (
-        response.get("pureMusic") is True or response.get("nolyric") is True
-    )
+    timed_lines, words, timed_events = parse_yrc((response.get("yrc") or {}).get("lyric", ""), with_timeline=True)
+    if timed_lines:
+        lines = timed_lines
+        timeline = timed_events
+        translations = parse_lrc((response.get("ytlrc") or {}).get("lyric", "")) or translations
+        readings = parse_lrc((response.get("yromalrc") or {}).get("lyric", "")) or readings
+    instrumental = response.get("pureMusic") is True
+    if instrumental:
+        lines, translations, readings, words, timeline = [], [], [], [], []
 
     try:
         cache.parent.mkdir(parents=True, exist_ok=True)
@@ -304,7 +360,9 @@ def _fetch_and_cache_lyrics(
                 {
                     "song_id": song_id,
                     "source": source,
-                    "provider_version": 6,
+                    "provider_version": 9,
+                    "timeline": timeline,
+                    "words": words,
                     "checked_at": time.time(),
                     "media": asdict(state),
                     "lines": lines,
@@ -318,7 +376,7 @@ def _fetch_and_cache_lyrics(
         )
     except OSError:
         pass
-    return LyricBundle(lines, translations, readings, instrumental=instrumental)
+    return LyricBundle(lines, translations, readings, instrumental=instrumental, words=words, timeline=timeline)
 
 
 def fetch_lyrics(state: MediaState) -> LyricBundle:
@@ -330,7 +388,8 @@ def fetch_lyrics(state: MediaState) -> LyricBundle:
 def _fetch_lyrics(state: MediaState) -> LyricBundle:
     """Resolve a track against NetEase and return timestamped lyrics."""
     if state.provider == "qqmusic":
-        return LyricBundle(parse_lrc(state.embedded_lyrics), parse_lrc(state.embedded_translation)) if state.song_id and state.lyrics_ready else LyricBundle([], [])
+        return LyricBundle(parse_lrc(state.embedded_lyrics), parse_lrc(state.embedded_translation),
+                           timeline=lrc_timeline(state.embedded_lyrics)) if state.song_id and state.lyrics_ready else LyricBundle([], [])
     if not state.title or state.provider != "netease" or not state.song_id:
         return LyricBundle([], [])
     cache = _cache_path(state)

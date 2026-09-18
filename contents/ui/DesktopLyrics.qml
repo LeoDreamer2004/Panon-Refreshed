@@ -19,6 +19,7 @@ Item {
     property var colors: ["#8b5cf6", "#22d3ee", "#f472b6"]
     property bool lyricsAvailable: false
     property bool mediaPlaying: false
+    property real mediaPosition: 0
     property bool showTranslation: true
     property bool showFurigana: true
     property bool canSeek: false
@@ -138,6 +139,11 @@ Item {
                 visible: root.lyricsAvailable && root.lyricEntries.length > 0
                 clip: true
                 interactive: true
+                layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+                layer.effect: ShaderEffect {
+                    property real fadeSize: Math.min(0.12, 24 / Math.max(1, lyricList.height))
+                    fragmentShader: Qt.resolvedUrl("shaders/lyric-fade.frag.qsb")
+                }
                 reuseItems: true
                 cacheBuffer: height
                 spacing: root.hasTranslation ? 3 : 5
@@ -257,8 +263,13 @@ Item {
                         RubyLyric {
                             id: rubyLine
                             width: parent.width
-                            visible: root.showFurigana && segments.some(part => Boolean(part.reading))
-                            segments: lyricDelegate.modelData.ruby || []
+                            visible: words.length > 0 || (showReadings && segments.some(part => Boolean(part.reading)))
+                            segments: lyricDelegate.modelData.ruby && lyricDelegate.modelData.ruby.length
+                                      ? lyricDelegate.modelData.ruby : [{text: lyricDelegate.modelData.text || "", reading: ""}]
+                            words: lyricDelegate.modelData.words || []
+                            position: lyricDelegate.isCurrent ? root.mediaPosition : 0
+                            karaoke: lyricDelegate.isCurrent && words.length > 0
+                            showReadings: root.showFurigana && segments.some(part => Boolean(part.reading))
                             pixelSize: lyricDelegate.isCurrent ? 21 : (root.hasTranslation ? 14 : 15)
                             emphasized: lyricDelegate.isCurrent
                             textColor: lyricDelegate.isCurrent ? "#ffffff" : "#d5d8e3"

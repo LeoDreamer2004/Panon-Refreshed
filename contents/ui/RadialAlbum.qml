@@ -139,7 +139,7 @@ Item {
             anchors.fill: parent
             radius: width / 2
             antialiasing: true
-            visible: coverImage.status !== Image.Ready
+            visible: !circularCover.ready
             gradient: Gradient {
                 GradientStop { position: 0.0; color: root.primaryColor }
                 GradientStop { position: 0.55; color: root.secondaryColor }
@@ -164,63 +164,11 @@ Item {
             }
         }
 
-        Image {
-            id: coverImage
-            anchors.fill: parent
-            source: root.artUrl
-            asynchronous: true
-            cache: true
-            fillMode: Image.PreserveAspectCrop
-            horizontalAlignment: Image.AlignHCenter
-            verticalAlignment: Image.AlignVCenter
-            clip: true
-            visible: false
-        }
-
-        Item {
+        CoverTransition {
             id: circularCover
             anchors.fill: parent
-            visible: coverImage.status === Image.Ready
-            Loader {
-                id: coverEffect
-                anchors.fill: parent
-                source: Qt.resolvedUrl("MaskedCover.qml")
-                onLoaded: item.image = coverImage
-            }
-            Canvas {
-                id: fallbackCanvas
-                anchors.fill: parent
-                visible: coverEffect.status === Loader.Error
-                property string imageUrl: root.artUrl
-                onImageUrlChanged: { if (imageUrl) loadImage(imageUrl); requestPaint() }
-                Component.onCompleted: { if (imageUrl) loadImage(imageUrl) }
-                onImageLoaded: requestPaint()
-                onWidthChanged: requestPaint()
-                onHeightChanged: requestPaint()
-                onVisibleChanged: requestPaint()
-                onPaint: {
-                    const ctx = getContext("2d")
-                    ctx.reset()
-                    if (!isImageLoaded(imageUrl)) return
-                    const size = Math.min(coverImage.sourceSize.width, coverImage.sourceSize.height)
-                    if (size <= 0) return
-                    ctx.beginPath()
-                    ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI)
-                    ctx.clip()
-                    ctx.drawImage(imageUrl, (coverImage.sourceSize.width - size) / 2,
-                                  (coverImage.sourceSize.height - size) / 2, size, size, 0, 0, width, height)
-                }
-            }
-
-            // OpacityMask generates a circular texture first. Only that
-            // finished texture is transformed, so square artwork cannot leak.
-            NumberAnimation on rotation {
-                from: 0
-                to: 360
-                duration: 24000
-                loops: Animation.Infinite
-                running: root.playing && circularCover.visible
-            }
+            source: root.artUrl
+            playing: root.playing
         }
 
         Rectangle {
