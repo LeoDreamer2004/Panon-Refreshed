@@ -62,6 +62,7 @@ PlasmoidItem {
         wallpaperInfo: backend.controlState.wallpaper || ({})
         blurStrength: plasmoid.configuration.desktopBlurStrength
         overlayStrength: plasmoid.configuration.desktopOverlayStrength
+        borderWidth: plasmoid.configuration.desktopBorderWidth
         showTranslation: plasmoid.configuration.showTranslation
         showFurigana: plasmoid.configuration.showFurigana
         onFuriganaToggleRequested: {

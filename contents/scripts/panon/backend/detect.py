@@ -138,10 +138,10 @@ def detect_player(provider, selected_path=''):
         if configured.get('managedBy') == 'panon' and configured.get('appPath') == path and configured.get('electron'):
             runtime = shutil.which(configured['electron'])
             if runtime: runtimes.insert(0, runtime)
-        # This QQ adapter is explicitly tested against major 43 only.
+        # Match the runtime major accepted by integrations/qqmusic/adapters.json.
         if provider == 'qqmusic':
-            runtime = shutil.which('electron43')
-            if runtime: runtimes = [runtime]
+            runtime = shutil.which('electron44')
+            runtimes = [runtime] if runtime else []
         if provider == 'netease' and not runtimes and path in known:
             runtime = shutil.which('electron')
             if runtime: runtimes = [runtime]

@@ -3,6 +3,6 @@
     "id": "qqmusic-1.1.8-webpack-v1",
     "playerModule": 35229,
     "apiModule": 32590,
-    "testedRuntimeMajors": [43]
+    "testedRuntimeMajors": [44]
   }
 }

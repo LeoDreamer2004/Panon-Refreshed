@@ -39,6 +39,7 @@ KCM.SimpleKCM {
     property alias cfg_panelSpectrumWidth: panelSpectrumWidth.value
     property alias cfg_desktopBlurStrength: desktopBlurStrength.value
     property alias cfg_desktopOverlayStrength: desktopOverlayStrength.value
+    property alias cfg_desktopBorderWidth: desktopBorderWidth.value
 
     // Plasma 6.7 also injects every schema default as an initial property.
     property var cfg_fpsDefault
@@ -54,6 +55,7 @@ KCM.SimpleKCM {
     property var cfg_panelSpectrumWidthDefault
     property var cfg_desktopBlurStrengthDefault
     property var cfg_desktopOverlayStrengthDefault
+    property var cfg_desktopBorderWidthDefault
 
     Kirigami.FormLayout {
         DetectedField {
@@ -170,6 +172,21 @@ KCM.SimpleKCM {
             stepSize: 5
             textFromValue: function(value) { return i18nd("plasma_applet_panon", "%1%", value) }
             valueFromText: function(text) { return parseInt(text) }
+        }
+
+        QQC2.SpinBox {
+            id: desktopBorderWidth
+            Kirigami.FormData.label: i18nd("plasma_applet_panon", "Desktop border width:")
+            from: 0
+            to: 8
+            stepSize: 1
+            textFromValue: function(value) {
+                return value === 0 ? i18nd("plasma_applet_panon", "No border")
+                                   : i18nd("plasma_applet_panon", "%1 px", value)
+            }
+            valueFromText: function(text) {
+                return text.trim() === i18nd("plasma_applet_panon", "No border") ? 0 : parseInt(text)
+            }
         }
     }
 }

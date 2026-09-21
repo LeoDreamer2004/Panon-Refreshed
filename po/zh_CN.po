@@ -226,6 +226,12 @@ msgstr "桌面背景模糊强度："
 msgid "Background dark overlay:"
 msgstr "背景暗色遮罩："
 
+msgid "Desktop border width:"
+msgstr "桌面边框粗细："
+
+msgid "No border"
+msgstr "无边框"
+
 msgid "Toggle Japanese readings"
 msgstr "开关日语注音"
 

@@ -36,6 +36,7 @@ Item {
     property var wallpaperInfo: ({})
     property int blurStrength: 100
     property int overlayStrength: 70
+    property int borderWidth: 1
 
     function overlayAlpha(defaultAlpha) {
         const strength = Math.max(0, Math.min(100, overlayStrength)) / 100
@@ -154,7 +155,7 @@ Item {
         anchors.margins: 3
         radius: 22
         color: "#20070a12"
-        border.width: 1
+        border.width: Math.max(0, Math.min(8, root.borderWidth))
         border.color: Qt.rgba(root.primaryColor.r, root.primaryColor.g,
                               root.primaryColor.b, 0.64)
         gradient: Gradient {

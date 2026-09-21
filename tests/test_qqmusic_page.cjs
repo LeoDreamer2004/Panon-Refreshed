@@ -24,6 +24,7 @@ async function main() {
   loader.m = {35229:function currentSong(){}, 32590:function ufetch(){}};
   const chunks = []; chunks.push = chunk => chunk[2](loader);
   const profile = require('../integrations/qqmusic/adapters.json')['1.1.8'];
+  assert.deepEqual(profile.testedRuntimeMajors, [44]);
   const context = vm.createContext({TextDecoder, atob, navigator:{mediaSession:{metadata:meta}}, window:{__panonQQProfile:profile}, global:{webpackChunkqqmusic:chunks}});
   const read = () => vm.runInContext(script, context);
   assert.equal(read().lyricsReady, false);

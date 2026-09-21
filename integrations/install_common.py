@@ -41,7 +41,7 @@ def install(provider, script):
     app_path = app_path.expanduser().absolute()
     if not app_path.is_file() or app_path.name != 'app.asar':
         raise SystemExit('Expected an existing app.asar; sandboxed packages need separate adapters')
-    executable = args.electron or config.get('electron') or ('electron43' if provider == 'qqmusic' else 'electron')
+    executable = args.electron or config.get('electron') or ('electron44' if provider == 'qqmusic' else 'electron')
     electron = shutil.which(executable)
     if not electron:
         raise SystemExit('Electron runtime not found; specify --electron for the runtime supported by your player')

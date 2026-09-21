@@ -40,6 +40,7 @@ KCM.SimpleKCM {
     property int cfg_panelSpectrumWidth
     property int cfg_desktopBlurStrength
     property int cfg_desktopOverlayStrength
+    property int cfg_desktopBorderWidth
     property var cfg_lyricFontDefault
     property var cfg_showTranslationDefault
     property var cfg_showFuriganaDefault
@@ -56,6 +57,7 @@ KCM.SimpleKCM {
     property var cfg_panelSpectrumWidthDefault
     property var cfg_desktopBlurStrengthDefault
     property var cfg_desktopOverlayStrengthDefault
+    property var cfg_desktopBorderWidthDefault
 
     property string command: ""
     property string operation: ""

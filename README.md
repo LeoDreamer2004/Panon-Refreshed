@@ -35,8 +35,6 @@ or run `python3 -m panon.backend.doctor` from `contents/scripts`.
 
 ## Optional exact-ID lyrics integrations
 
-Optional bridges support `netease-cloud-music-web-player` and the tested QQ Music
-1.1.8 / Electron 43 build, reading lyrics by verified song ID without title search.
 In **Music integrations**, auto-detect the player paths and update its separate
 `.desktop` launcher, then fully quit the player (including its tray process) and
 reopen it through the **Panon** menu entry; upstream files and original launchers

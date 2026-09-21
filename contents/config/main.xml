@@ -27,5 +27,6 @@
     <entry name="panelSpectrumWidth" type="Int"><default>160</default></entry>
     <entry name="desktopBlurStrength" type="Int"><default>100</default></entry>
     <entry name="desktopOverlayStrength" type="Int"><default>70</default></entry>
+    <entry name="desktopBorderWidth" type="Int"><default>1</default><min>0</min><max>8</max></entry>
   </group>
 </kcfg>
