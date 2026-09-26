@@ -18,7 +18,7 @@ depends=(
   'qt6-5compat'
   'libpulse'
   'pulse-native-provider'
-  'python>=3.10'
+  'python>=3.11'
   'python-numpy'
   'python-websockets>=13'
   'python-dbus'

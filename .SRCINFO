@@ -18,7 +18,7 @@ pkgbase = plasma6-applets-panon-refreshed-git
 	depends = qt6-5compat
 	depends = libpulse
 	depends = pulse-native-provider
-	depends = python>=3.10
+	depends = python>=3.11
 	depends = python-numpy
 	depends = python-websockets>=13
 	depends = python-dbus

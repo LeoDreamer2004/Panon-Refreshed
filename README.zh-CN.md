@@ -13,7 +13,7 @@
 
 需要 Linux、Plasma 6，以及以下 QML 模块：Qt Quick、Controls、Layouts、Kirigami、KCMUtils、Plasma5Support 和 Qt WebSockets。
 
-Python 要求为 3.10 及以上，必需依赖见 [requirements.txt](requirements.txt)，可选的日语注音依赖见 [requirements-readings.txt](requirements-readings.txt)。优先使用发行版软件包，也可以在虚拟环境中安装依赖，然后在组件设置中选择该环境的解释器。编译安装 `dbus-python` 时可能需要 D-Bus 和 GLib 开发包。Panon-Refreshed 不要求使用 Intel MKL。
+Python 要求为 3.11 及以上，必需依赖见 [requirements.txt](requirements.txt)，可选的日语注音依赖见 [requirements-readings.txt](requirements-readings.txt)。优先使用发行版软件包，也可以在虚拟环境中安装依赖，然后在组件设置中选择该环境的解释器。编译安装 `dbus-python` 时可能需要 D-Bus 和 GLib 开发包。Panon-Refreshed 不要求使用 Intel MKL。
 
 音频采集需要 `pactl`、`parec`，以及 PulseAudio 或 PipeWire 的 PulseAudio 兼容服务。音频采集失败不会禁用媒体信息和播放控制。
 

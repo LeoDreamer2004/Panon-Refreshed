@@ -14,7 +14,7 @@ controls for KDE Plasma, with separate desktop and compact panel layouts.
 
 Linux and Plasma 6 are required, with Qt Quick/Controls/Layouts, Kirigami,
 KCMUtils, Plasma5Support and the Qt WebSockets QML module.
-Python 3.10+ needs the packages in `requirements.txt`; optional Japanese readings
+Python 3.11+ needs the packages in `requirements.txt`; optional Japanese readings
 use `requirements-readings.txt`. Prefer distribution packages, or select a
 virtual environment's interpreter in the settings. Building dbus-python may
 require D-Bus and GLib development packages. Panon-Refreshed does not require Intel MKL.
