@@ -196,13 +196,26 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
     wallpaper = {}
     screen_id = -1
     command_task = None
+    visual_active = True
+    wants_wallpaper = True
+    wake = asyncio.Event()
+    sent_model_id = None
 
     async def receive_commands(websocket):
-        nonlocal next_media_poll, screen_id, next_wallpaper_poll
+        nonlocal next_media_poll, screen_id, next_wallpaper_poll, visual_active, wants_wallpaper, sent_model_id
         async for message in websocket:
             try:
                 command = json.loads(message)
                 if not isinstance(command, dict) or not token or command.get("token") != token:
+                    continue
+                if command.get("action") == "activity":
+                    if type(command.get("active")) is bool:
+                        visual_active = command["active"]
+                        wants_wallpaper = command.get("wallpaper") is True
+                        next_media_poll = next_wallpaper_poll = 0
+                        if visual_active:
+                            sent_model_id = None
+                        wake.set()
                     continue
                 if command.get("action") == "screen":
                     screen = command.get("screen")
@@ -212,6 +225,7 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                     continue
                 await asyncio.to_thread(execute_command, media, command)
                 next_media_poll = 0.0
+                wake.set()
             except Exception as error:
                 print(f"Media command rejected: {error}", file=sys.stderr)
 
@@ -239,13 +253,13 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
             command_task = asyncio.create_task(receive_commands(websocket))
             while True:
                 now = asyncio.get_running_loop().time()
-                if now >= next_wallpaper_poll:
+                if visual_active and wants_wallpaper and now >= next_wallpaper_poll:
                     wallpaper = await asyncio.to_thread(read_wallpaper, screen_id)
                     wallpaper_url = wallpaper.get("url", "")
                     next_wallpaper_poll = now + 1.0
                 if poll_task is None and now >= next_media_poll:
                     poll_task = asyncio.create_task(asyncio.to_thread(read_mpris, preferred_player, media.service))
-                    next_media_poll = now + 0.25
+                    next_media_poll = now + (0.25 if visual_active else 2.0)
 
                 if poll_task is not None and poll_task.done():
                     try:
@@ -318,7 +332,7 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                 # not issue requests. Transient failures are retried without
                 # blocking audio capture or the QML renderer.
                 if (
-                    lyric_task is None
+                    visual_active and lyric_task is None
                     and media.title
                     and not lyrics_resolved
                     and lyric_retry_count < 3
@@ -344,7 +358,7 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                 # file is ready. Retry only the artwork extraction, never the
                 # lyric network request, and stop after a few attempts.
                 if (
-                    palette_task is None
+                    visual_active and wants_wallpaper and palette_task is None
                     and media.art_url
                     and palette_pending
                     and palette_retry_count < 6
@@ -355,6 +369,16 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                     palette_task = asyncio.create_task(load_palette(media))
 
                 audio_error = ""
+                if not visual_active:
+                    capture.stop()
+                    analyzer.reset()
+                    await websocket.send(json.dumps({"idle": True}))
+                    try:
+                        await asyncio.wait_for(wake.wait(), timeout=2.0)
+                    except asyncio.TimeoutError:
+                        pass
+                    wake.clear()
+                    continue
                 try:
                     if (
                         capture.process is None
@@ -388,6 +412,11 @@ async def run(url: str, fps: int, bands: int, decay: int, *, token="", audio_sou
                 line_index = visible_lyrics["currentIndex"]
                 visible_lyrics["timing"] = playback_lyric_timing(
                     lyric_model["entries"], line_index, position, media.duration)
+                model_id = lyric_model.get("modelId", "")
+                if sent_model_id == model_id:
+                    visible_lyrics = {key: visible_lyrics[key] for key in ("modelId", "currentIndex", "timing")}
+                else:
+                    sent_model_id = model_id
                 await websocket.send(
                     json.dumps(
                         {

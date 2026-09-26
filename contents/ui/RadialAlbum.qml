@@ -26,7 +26,7 @@ Item {
             to: 360
             duration: 36000
             loops: Animation.Infinite
-            running: root.visible
+            running: root.visible && root.playing
         }
 
         Repeater {

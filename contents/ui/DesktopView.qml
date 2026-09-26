@@ -6,6 +6,17 @@ import org.kde.kirigami as Kirigami
 
 Item {
     id: root
+    property bool renderActive: true
+    property bool keepTextures: true
+    onRenderActiveChanged: {
+        if (renderActive) { releaseTextures.stop(); keepTextures = true }
+        else releaseTextures.restart()
+    }
+    Timer {
+        id: releaseTextures
+        interval: 15000
+        onTriggered: root.keepTextures = false
+    }
 
     property var spectrum: []
     property real audioLevel: 0.0
@@ -71,7 +82,7 @@ Item {
     property real globalY: 0
 
     property real revealProgress: displayActive ? 1.0 : 0.0
-    visible: displayActive || revealProgress > 0.0
+    visible: renderActive && (displayActive || revealProgress > 0.0)
     enabled: displayActive
     opacity: revealProgress
     scale: 0.975 + 0.025 * revealProgress
@@ -136,7 +147,7 @@ Item {
         id: wallpaperEffect
         anchors.fill: parent
         anchors.margins: 3
-        active: root.wallpaperUrl.length > 0 && root.blurStrength > 0
+        active: root.keepTextures && root.wallpaperUrl.length > 0 && root.blurStrength > 0
         source: Qt.resolvedUrl("BlurredWallpaper.qml")
         onLoaded: {
             item.wallpaperUrl = Qt.binding(() => root.wallpaperUrl)
@@ -231,7 +242,7 @@ Item {
                     audioLevel: root.audioLevel
                     artUrl: root.artUrl
                     colors: root.displayColors
-                    playing: root.mediaPlaying
+                    playing: root.renderActive && root.mediaPlaying
                 }
 
                 PlaybackControls {
@@ -260,6 +271,7 @@ Item {
         }
 
         DesktopLyrics {
+            renderActive: root.renderActive
             preferredFont: root.lyricFont
             anchors.left: leftPane.right
             anchors.leftMargin: 12

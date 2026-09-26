@@ -11,6 +11,15 @@ Item {
     property var activeSocket: null
     property var controlState: ({})
     property int screenId: -1
+    property bool visualActive: true
+    property bool wantsWallpaper: true
+    property var cachedLyrics: ({})
+    function sendActivity() {
+        if (activeSocket) activeSocket.sendTextMessage(JSON.stringify({token: sessionToken,
+            action: "activity", active: visualActive, wallpaper: wantsWallpaper}))
+    }
+    onVisualActiveChanged: sendActivity()
+    onWantsWallpaperChanged: sendActivity()
     function sendScreen() {
         if (activeSocket) activeSocket.sendTextMessage(JSON.stringify({token:sessionToken, action:"screen", screen:screenId}))
     }
@@ -72,10 +81,18 @@ Item {
                         }
                         authenticated = true
                         root.activeSocket = webSocket
+                        root.cachedLyrics = ({})
+                        root.sendActivity()
                         root.sendScreen()
                         return
                     }
                     root.lastFrameAt = Date.now()
+                    if (payload.idle) return
+                    if (payload.media && payload.media.lyricWindow) {
+                        const delta = payload.media.lyricWindow
+                        if (delta.entries !== undefined) root.cachedLyrics = delta
+                        payload.media.lyricWindow = Object.assign({}, root.cachedLyrics, delta)
+                    }
                     root.controlState = payload.media || ({})
                     if (payload.error) {
                         root.backendFailed(payload.error)

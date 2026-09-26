@@ -6,6 +6,7 @@ import org.kde.kirigami as Kirigami
 
 Item {
     id: root
+    property bool renderActive: true
 
     property string trackTitle: ""
     property string trackArtist: ""
@@ -139,7 +140,7 @@ Item {
                 visible: root.lyricsAvailable && root.lyricEntries.length > 0
                 clip: true
                 interactive: true
-                layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+                layer.enabled: root.renderActive && GraphicsInfo.api !== GraphicsInfo.Software
                 layer.effect: ShaderEffect {
                     property real fadeSize: Math.min(0.12, 24 / Math.max(1, lyricList.height))
                     fragmentShader: Qt.resolvedUrl("shaders/lyric-fade.frag.qsb")

@@ -1,9 +1,31 @@
 import QtQuick
+import QtQuick.Window
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 
 PlasmoidItem {
     id: root
+    readonly property bool onDesktop: Plasmoid.formFactor === PlasmaCore.Types.Planar
+    readonly property bool surfaceVisible: visible && (!Window.window || Window.window.visible)
+    readonly property bool shouldRender: surfaceVisible && !(occlusion.item && occlusion.item.covered)
+    property bool visualActive: true
+    onShouldRenderChanged: {
+        if (shouldRender) { idleDelay.stop(); visualActive = true }
+        else idleDelay.restart()
+    }
+    Component.onCompleted: if (!shouldRender) idleDelay.restart()
+    Timer {
+        id: idleDelay
+        interval: 800
+        onTriggered: root.visualActive = root.shouldRender
+    }
+    Loader {
+        id: occlusion
+        active: root.onDesktop
+        source: Qt.resolvedUrl("DesktopOcclusion.qml")
+        onLoaded: item.screenGeometry = Qt.binding(() => Qt.rect(root.Screen.virtualX, root.Screen.virtualY,
+                                                                 root.Screen.width, root.Screen.height))
+    }
 
     property var spectrum: []
     property real audioLevel: 0.0
@@ -45,6 +67,7 @@ PlasmoidItem {
         lyricKey: root.lyricModelId + ":" + root.currentLyricIndex
     }
     fullRepresentation: DesktopView {
+        renderActive: root.visualActive
         lyricFont: plasmoid.configuration.lyricFont
         mediaProvider: root.mediaProvider
         spectrum: root.spectrum
@@ -91,6 +114,8 @@ PlasmoidItem {
 
     WsConnection {
         id: backend
+        visualActive: root.visualActive
+        wantsWallpaper: root.onDesktop || root.expanded
         screenId: root.screen
         onSpectrumReceived: function(values, level) {
             root.backendError = ""
